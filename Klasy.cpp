@@ -14,7 +14,7 @@ public:
     }
     void movx(float czas)
     {
-        move(-10*czas,0);
+        move(0*czas,0);
     }
 };
 std::vector<Wrog> W;

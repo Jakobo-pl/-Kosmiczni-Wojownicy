@@ -77,6 +77,7 @@ int main()
 
     int gameover=1;
     int wrogowie=0;
+    int rundy=0;
 
     sf::Clock clock;
 
@@ -154,7 +155,7 @@ int main()
                     }
                     czas=0;
                 }
-                if(czas_deszczu<30)
+                if(czas_deszczu<10)
                 {
                      if(czas_meteor>0.8)
                      {
@@ -170,14 +171,13 @@ int main()
                      czas_meteor=0;
                      }
                  }
-                if(czas_deszczu>30)
+                if(czas_deszczu>10)
                 {
 
                     if(czas_meteor>1.5)
                     {
                         P.push_back(Pociskprzeciwnika(rakieta));
                         P.back().setPosition(200,-150);
-                        P.back().setOrigin(10,17.5);
                         P.back().setTexture(zlypocisk);
                         P.back().setTextureRect(sf::IntRect(0,0, 20, 35));
                         if(P.size()>10)
@@ -188,21 +188,67 @@ int main()
 
                         if(wrogowie==0)
                         {
-                        W.push_back(Wrog(zlydron));
-                        W.back().setPosition(rand()%1800,-200);
-                        W.back().setOrigin(49.5,47.5);
-                        W.back().setScale(1.4,1.4);
-                        W.back().setTexture(wrogistatek);
-                        W.back().setTextureRect(sf::IntRect(1,2, 99, 95));
-                        wrogowie=1;
+                            for(int i=0; i<rundy+1; i++)
+                            {
+                                W.push_back(Wrog(zlydron));
+                                W.back().setPosition(rand()%1800,-200);
+                                W.back().setOrigin(49.5,47.5);
+                                W.back().setScale(1.4,1.4);
+                                W.back().setTexture(wrogistatek);
+                                W.back().setTextureRect(sf::IntRect(1,2, 99, 95));
+                            }
+                            wrogowie=1;
                         }
                     }
                 }
-
-
-
             window.clear();
             window.draw(niebo);
+
+
+            for(int i=0; i<V.size(); i++)
+            {
+                window.draw(V[i]);
+                V[i].mov(elapsed.asSeconds());
+                for(auto &k:M)
+                {
+                    if(abs(V[i].getPosition().x-k.getPosition().x)<65 && abs(V[i].getPosition().y-k.getPosition().y)<45)
+                    {
+                    V.erase(V.begin()+i);
+                    M.push_back(Meteoryt(mete));
+                    M.back().setPosition(k.getPosition().x-30,k.getPosition().y);
+                    M.back(). setScale(0.7,0.7);
+                    M.back().setOrigin(70,67.5);
+                    M.back().setTexture(lecimeteor);
+                    M.back().setTextureRect(sf::IntRect(metx(),mety(), 140, 135));
+                    }
+                }
+            } 
+            for(auto &c:P)
+            {
+                window.draw(c);
+                c.mov(elapsed.asSeconds());
+                if(abs(c.getPosition().x-dron.getPosition().x)<60 && abs(c.getPosition().y-dron.getPosition().y)<60)
+                {
+                    gameover=1;
+                    czas=0;
+                    czas_meteor=0;
+                    czas_deszczu=0;
+                }
+            }
+            for(int i=0; i<W.size(); i++)
+            {
+                window.draw(W[i]);
+                W[i].movy(elapsed.asSeconds());
+                W[i].movx(elapsed.asSeconds());
+                for(int j=0; j<V.size(); j++)
+                {
+                    if(abs(W[i].getPosition().x-V[j].getPosition().x)<70 && abs(W[i].getPosition().y-V[j].getPosition().y)<30)
+                    {
+                    W.erase(W.begin()+i);
+                    V.erase(V.begin()+i);
+                    }
+                }
+            }
             for(auto &c:M)
             {
                 window.draw(c);
@@ -216,21 +262,11 @@ int main()
                     czas_deszczu=0;
                 }
             }
-            for(auto &c:W)
+            if((W.size() == 0)&&(czas_deszczu>11.5))
             {
-                window.draw(c);
-                c.movy(elapsed.asSeconds());
-                c.movx(elapsed.asSeconds());
-            }
-            for(auto &c:V)
-            {
-                window.draw(c);
-                c.mov(elapsed.asSeconds());
-            } 
-            for(auto &c:P)
-            {
-                window.draw(c);
-                c.mov(elapsed.asSeconds());
+            czas_deszczu=0;
+            wrogowie=0;
+            rundy++;
             }
             window.draw(dron);
             }
