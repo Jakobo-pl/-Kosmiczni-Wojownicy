@@ -3,12 +3,6 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
 
-int losowanie()
-{
-    int v= rand()%200-100;
-    return v;
-}
-
 int metx()
 {
     int X;
@@ -28,3 +22,6 @@ int mety()
     if(y==2){ Y=375;}
     return Y;
 }
+
+
+

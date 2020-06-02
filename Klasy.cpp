@@ -12,9 +12,9 @@ public:
     {
         if(this->getGlobalBounds().top<80) {move(0,60*czas);}
     }
-    void movx(float czas)
+    void movx(float czas, int v)
     {
-        move(0*czas,0);
+        move(v*czas,0);
     }
 };
 std::vector<Wrog> W;

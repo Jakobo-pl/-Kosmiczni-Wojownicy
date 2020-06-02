@@ -131,6 +131,7 @@ int main()
                 float czas=elapsed.asSeconds()+czas;
                 float czas_meteor=elapsed.asSeconds()+czas_meteor;
                 float czas_deszczu=elapsed.asSeconds()+czas_deszczu;
+                float czas_losowania=elapsed.asSeconds()+czas_losowania;
 
                 if(gameover==0)
                 {
@@ -149,7 +150,7 @@ int main()
                     V.back().setPosition(dron.getPosition().x-4,dron.getPosition().y-50);
                     V.back().setTexture(lecistrzal);
                     V.back().setTextureRect(sf::IntRect(0,0, 17, 40));
-                    if(V.size()>10)
+                    if(V.size()>8)
                     {
                         V.erase(V.begin());
                     }
@@ -176,11 +177,15 @@ int main()
 
                     if(czas_meteor>1.5)
                     {
+                        for(auto &c : W)
+                        {
                         P.push_back(Pociskprzeciwnika(rakieta));
-                        P.back().setPosition(200,-150);
+                        P.back().setPosition(c.getPosition().x-10,c.getPosition().y+50);
                         P.back().setTexture(zlypocisk);
                         P.back().setTextureRect(sf::IntRect(0,0, 20, 35));
-                        if(P.size()>10)
+                        }
+
+                        if(P.size()>10*(rundy+1))
                         {
                             P.erase(P.begin());
                         }
@@ -209,17 +214,25 @@ int main()
             {
                 window.draw(V[i]);
                 V[i].mov(elapsed.asSeconds());
-                for(auto &k:M)
+                for(auto &m:M)
                 {
-                    if(abs(V[i].getPosition().x-k.getPosition().x)<65 && abs(V[i].getPosition().y-k.getPosition().y)<45)
+                    if(abs(V[i].getPosition().x-m.getPosition().x)<65 && abs(V[i].getPosition().y-m.getPosition().y)<45)
                     {
                     V.erase(V.begin()+i);
                     M.push_back(Meteoryt(mete));
-                    M.back().setPosition(k.getPosition().x-30,k.getPosition().y);
+                    M.back().setPosition(m.getPosition().x-30,m.getPosition().y);
                     M.back(). setScale(0.7,0.7);
                     M.back().setOrigin(70,67.5);
                     M.back().setTexture(lecimeteor);
                     M.back().setTextureRect(sf::IntRect(metx(),mety(), 140, 135));
+                    }
+                }
+                for(int j=0;j<W.size(); j++)
+                {
+                    if(abs(W[j].getPosition().x-V[i].getPosition().x)<70 && abs(W[j].getPosition().y-V[i].getPosition().y)<30)
+                    {
+                    W.erase(W.begin()+j);
+                    V.erase(V.begin()+i);
                     }
                 }
             } 
@@ -233,21 +246,15 @@ int main()
                     czas=0;
                     czas_meteor=0;
                     czas_deszczu=0;
+                    rundy=0;
+                    wrogowie=0;
                 }
             }
             for(int i=0; i<W.size(); i++)
             {
                 window.draw(W[i]);
                 W[i].movy(elapsed.asSeconds());
-                W[i].movx(elapsed.asSeconds());
-                for(int j=0; j<V.size(); j++)
-                {
-                    if(abs(W[i].getPosition().x-V[j].getPosition().x)<70 && abs(W[i].getPosition().y-V[j].getPosition().y)<30)
-                    {
-                    W.erase(W.begin()+i);
-                    V.erase(V.begin()+i);
-                    }
-                }
+                W[i].movx(elapsed.asSeconds(),dron.getPosition().x/10);
             }
             for(auto &c:M)
             {
@@ -260,6 +267,7 @@ int main()
                     czas=0;
                     czas_meteor=0;
                     czas_deszczu=0;
+                    wrogowie=0;
                 }
             }
             if((W.size() == 0)&&(czas_deszczu>11.5))
@@ -270,7 +278,7 @@ int main()
             }
             window.draw(dron);
             }
-
+            std::cout<<dron.getPosition().x<<std::endl;
             window.display();
         }
         return 0;
