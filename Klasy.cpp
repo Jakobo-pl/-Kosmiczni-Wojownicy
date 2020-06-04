@@ -63,3 +63,5 @@ public:
     }
 };
 std::vector<Meteoryt> M;
+
+std::vector<int>Pred;
