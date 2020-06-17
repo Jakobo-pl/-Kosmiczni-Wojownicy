@@ -254,15 +254,20 @@ int main()
             for(int i=0; i<W.size(); i++)
 
             {
-                if((W[i].getPosition().x>1820)||(W[i].getPosition().x<75))
+                if(W[i].getPosition().x>1820)
                 {
-                   //Pred[i]=-Pred[i];
+                   Pred[i]=-60;
+                }
+                if(W[i].getPosition().x<75)
+                {
+                    Pred[i]=60;
                 }
                 if(rundy>0)
                 {
-                    if(W[i].getPosition().x-W[i+1].getPosition().x<100)
+                    if(abs(W[i].getPosition().x-W[i+1].getPosition().x)<120)
                     {
-
+                         Pred[i]=-Pred[i];
+                         Pred[i+1]=-Pred[i+1];
                     }
                 }
                 window.draw(W[i]);
