@@ -10,6 +10,8 @@ int main()
 {
     sf::Texture wrogistatek;
     wrogistatek.loadFromFile("wrogistatek.png");
+    sf::Texture NAMIAR;
+    NAMIAR.loadFromFile("NAMIAR.png");
     sf::Texture wstep;
     wstep.loadFromFile("log.png");
     sf::Texture newg;
@@ -42,7 +44,7 @@ int main()
     dron.setOrigin(57.5, 50);
     dron.setTextureRect(sf::IntRect(0, 0, 115, 100));
     dron.setPosition(917, 880);
-    sf::Sprite pocisk,mete, zlydron, rakieta;
+    sf::Sprite pocisk,mete, zlydron, rakieta, auton;
 
     sf::Music music;
     if (!music.openFromFile("doom.ogg"))
@@ -68,6 +70,8 @@ int main()
     int gameover=1;
     int wrogowie=0;
     int rundy=0;
+    bool autopilot=false;
+    int ilosc=0;
 
     std::vector<int> predkosc;
 
@@ -117,7 +121,6 @@ int main()
                 float czas=elapsed.asSeconds()+czas;
                 float czas_meteor=elapsed.asSeconds()+czas_meteor;
                 float czas_deszczu=elapsed.asSeconds()+czas_deszczu;
-                float czas_losowania=elapsed.asSeconds()+czas_losowania;
 
                 if(gameover==0)
                 {
@@ -128,12 +131,14 @@ int main()
                     gameover=2;
                 }
 
+
                 if((sf::Mouse::isButtonPressed(sf::Mouse::Left))&&(czas>0.5))
                 {
                     sound.play();
                     V.push_back(Myobiekt(pocisk));
                     V.back().setPosition(dron.getPosition().x-4,dron.getPosition().y-50);
                     V.back().setTexture(lecistrzal);
+                    V.back().setOrigin(8.5, 20);
                     V.back().setTextureRect(sf::IntRect(0,0, 17, 40));
 
                     if(V.size()>8)
@@ -158,7 +163,17 @@ int main()
                          }
                      czas_meteor=0;
                      }
+
                  }
+
+                if((czas_deszczu<8.82)&&(czas_deszczu>8.80))
+                {
+                    auton.setTexture(NAMIAR);
+                    auton.setScale(0.15, 0.15);
+                    auton.setTextureRect(sf::IntRect(0, 0, 512, 512));
+                    auton.setOrigin(256,256);
+                    auton.setPosition(rand()%1800,-200);
+                }
 
                 if(czas_deszczu>10)
                 {
@@ -210,7 +225,22 @@ int main()
             for(int i=0; i<V.size(); i++)
             {
                 window.draw(V[i]);
-                V[i].mov(elapsed.asSeconds());
+
+                if((autopilot==true))
+                {
+                  V[i].mov(elapsed.asSeconds(),namiarx(),-250);
+                  V[i].rotate(kat(dron.getPosition().x, W[0].getPosition().x, dron.getPosition().y, W[0].getPosition().y));
+                  if(abs(W[0].getPosition().x-V[i].getPosition().x)<70 && abs(W[0].getPosition().y-V[i].getPosition().y)<30)
+                  {
+                     autopilot=false;
+                  }
+                }
+
+                if(autopilot==false)
+                {
+                  V[i].mov(elapsed.asSeconds(),0,-250);
+                }
+
                 for(auto &m:M)
                 {
                     if(abs(V[i].getPosition().x-m.getPosition().x)<65 && abs(V[i].getPosition().y-m.getPosition().y)<45)
@@ -248,6 +278,7 @@ int main()
                     czas_deszczu=0;
                     rundy=0;
                     wrogowie=0;
+                    auton.setPosition(-200,-200);
                 }
             }
 
@@ -288,7 +319,14 @@ int main()
                     czas_meteor=0;
                     czas_deszczu=0;
                     wrogowie=0;
+                    auton.setPosition(-200,-200);
                 }
+            }
+
+            if((abs(dron.getPosition().x-auton.getPosition().x)<70)&&(abs(dron.getPosition().y-auton.getPosition().y)<70))
+            {
+                auton.setPosition(-200,-200);
+                autopilot=true;
             }
 
             if((W.size() == 0)&&(czas_deszczu>11.5))
@@ -298,6 +336,9 @@ int main()
             rundy++;
             }
 
+
+            window.draw(auton);
+            auton.move(0, 200*elapsed.asSeconds());
             window.draw(dron);
 
             }

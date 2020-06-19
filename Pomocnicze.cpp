@@ -2,6 +2,7 @@
 #include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
+#include <math.h>
 
 int metx()
 {
@@ -23,6 +24,28 @@ int mety()
     return Y;
 }
 
+int namiarx()
+{
+return 0;
+}
+
+float kat(float xS, float xW, float yS, float yW)
+{
+    if(xS>xW)
+    {
+        float kx = xS-xW;
+        float ky = yS-yW;
+        float dobrykat = atan(kx/ky);
+        return -dobrykat;
+    }
+    if(xS<xW)
+    {
+        float kx = xW-xS;
+        float ky = yS-yW;
+        float dobrykat = atan(kx/ky);
+        return dobrykat;
+    }
+}
 
 
 
