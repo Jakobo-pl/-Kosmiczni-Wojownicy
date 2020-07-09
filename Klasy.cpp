@@ -26,7 +26,7 @@ class Myobiekt: public sf::Sprite
 {
 public:
     Myobiekt (const sf::Sprite){}
-    void mov (float elaps, int x, int y){ move(x,y*elaps);};
+    void mov (float elaps, int x, int y){ move(x*elaps,y*elaps);};
 };
 std::vector<Myobiekt> V;
 

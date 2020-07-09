@@ -71,16 +71,13 @@ int main()
     int wrogowie=0;
     int rundy=0;
     bool autopilot=false;
-    int ilosc=0;
-
-    std::vector<int> predkosc;
 
     sf::Clock clock;
 
         while (window.isOpen())
         {
             rectangle_bounds = dron.getGlobalBounds();
-            startbounds = newgame.getGlobalBounds();;
+            startbounds = newgame.getGlobalBounds();
 
             sf::Time elapsed = clock.restart();
 
@@ -94,7 +91,7 @@ int main()
 
             if(gameover==1)
             {
-                sf::Vector2i globalPosition = sf::Mouse::getPosition();
+                sf::Vector2i globalPosition = sf::Mouse::getPosition(window);
                 window.clear();
                 window.draw(niebo);
                 window.draw(logo);
@@ -107,7 +104,7 @@ int main()
                 W.clear();
                 V.clear();
                 P.clear();
-                if(sf::Mouse::isButtonPressed(sf::Mouse::Left)&&globalPosition.x>=startbounds.left+18 && globalPosition.y>=startbounds.top+18 && globalPosition.y<=startbounds.top+startbounds.height+18 && globalPosition.x<=startbounds.left+startbounds.width+18)
+                if(sf::Mouse::isButtonPressed(sf::Mouse::Left)&&globalPosition.x>=startbounds.left && globalPosition.y>=startbounds.top && globalPosition.y<=startbounds.top+startbounds.height && globalPosition.x<=startbounds.left+startbounds.width)
                 {
                 gameover=0;
                 }
@@ -226,19 +223,19 @@ int main()
             {
                 window.draw(V[i]);
 
-                if((autopilot==true))
+                if(autopilot==true)
                 {
-                  V[i].mov(elapsed.asSeconds(),namiarx(),-250);
-                  V[i].rotate(kat(dron.getPosition().x, W[0].getPosition().x, dron.getPosition().y, W[0].getPosition().y));
+                  V[i].mov(elapsed.asSeconds(),predkosckoncowa(V[i].getPosition().x,W[0].getPosition().x,V[i].getPosition().y,W[0].getPosition().y,-100*elapsed.asSeconds()),-250);
+                  V[i].setRotation(kat(V[i].getPosition().x, W[0].getPosition().x, V[i].getPosition().y, W[0].getPosition().y));
                   if(abs(W[0].getPosition().x-V[i].getPosition().x)<70 && abs(W[0].getPosition().y-V[i].getPosition().y)<30)
                   {
                      autopilot=false;
                   }
                 }
-
                 if(autopilot==false)
                 {
                   V[i].mov(elapsed.asSeconds(),0,-250);
+                  V[i].setRotation(0);
                 }
 
                 for(auto &m:M)
@@ -248,7 +245,7 @@ int main()
                     V.erase(V.begin()+i);
                     M.push_back(Meteoryt(mete));
                     M.back().setPosition(m.getPosition().x-30,m.getPosition().y);
-                    M.back(). setScale(0.7,0.7);
+                    M.back().setScale(0.7,0.7);
                     M.back().setOrigin(70,67.5);
                     M.back().setTexture(lecimeteor);
                     M.back().setTextureRect(sf::IntRect(metx(),mety(), 140, 135));
@@ -274,6 +271,7 @@ int main()
                 {
                     gameover=1;
                     czas=0;
+                    autopilot=false;
                     czas_meteor=0;
                     czas_deszczu=0;
                     rundy=0;
@@ -295,10 +293,13 @@ int main()
                 }
                 if(rundy>0)
                 {
-                    if(abs(W[i].getPosition().x-W[i+1].getPosition().x)<120)
+                    for(int j=0; j<W.size(); j++)
                     {
-                         Pred[i]=-Pred[i];
-                         Pred[i+1]=-Pred[i+1];
+                        if((abs(W[i].getPosition().x-W[j].getPosition().x)<150)&&(i!=j))
+                        {
+                             Pred[j]=-Pred[j];
+                             Pred[i]=Pred[i];
+                        }
                     }
                 }
                 window.draw(W[i]);
@@ -316,6 +317,7 @@ int main()
                 {
                     gameover=1;
                     czas=0;
+                    autopilot=false;
                     czas_meteor=0;
                     czas_deszczu=0;
                     wrogowie=0;

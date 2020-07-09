@@ -24,11 +24,6 @@ int mety()
     return Y;
 }
 
-int namiarx()
-{
-return 0;
-}
-
 float kat(float xS, float xW, float yS, float yW)
 {
     if(xS>xW)
@@ -36,15 +31,21 @@ float kat(float xS, float xW, float yS, float yW)
         float kx = xS-xW;
         float ky = yS-yW;
         float dobrykat = atan(kx/ky);
-        return -dobrykat;
+        return -((dobrykat*360)/(2*M_PI));
     }
     if(xS<xW)
     {
         float kx = xW-xS;
         float ky = yS-yW;
         float dobrykat = atan(kx/ky);
-        return dobrykat;
+        return ((dobrykat*360)/(2*M_PI));
     }
+}
+
+float predkosckoncowa(float pociskx,float wrogx, float pocisky,float wrogy,float elapsed)
+{
+    float predkosckoncowa=(pociskx-wrogx)/ ((pocisky-wrogy)/(250*elapsed));
+    return predkosckoncowa;
 }
 
 
